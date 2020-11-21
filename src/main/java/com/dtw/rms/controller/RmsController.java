@@ -48,11 +48,11 @@ public class RmsController {
             if(null != rate.getRateId()) {
                 return rate;
             } else {
-                throw new RateNotFoundException("Not Found","Rate ID not found in RMS");
+                throw new RateNotFoundException("Rate ID not found in RMS");
             }
         } catch (Exception e) {
             logger.error("Error while fetching Rate", e);
-            throw new RateNotFoundException("Not Found", "Rate ID not found in RMS");
+            throw new RateNotFoundException("Rate ID not found in RMS");
         }
     }
     /**
@@ -107,15 +107,14 @@ public class RmsController {
 
         try {
             logger.info("Update rate : "+ rateId);
-
-            return Optional.ofNullable(rateId)
-                    .flatMap(rmsService::findByRateId)
-                    .filter(rate1 -> Optional.ofNullable(rate1.getRateId()).isPresent())
-                    .map(rate1 -> {
-                        rate.setRateId(rateId);
-                        return rmsService.save(rate);})
-                    .orElseGet(Rate::new)
-                    ;
+            logger.info("search requested with RateID by user: "+ rateId);
+            Rate rate1 = rmsService.findByRateId(rateId).orElseGet(Rate::new);
+            if(null != rate1.getRateId()) {
+                rate.setRateId(rateId);
+                return rmsService.save(rate);
+            } else {
+                throw new InternalServerException("Internal Servererror. Please contact admin");
+            }
         } catch (Exception e) {
             logger.error("Error while Updating Rate ", e);
             throw new InternalServerException("Internal Servererror. Please contact admin");
