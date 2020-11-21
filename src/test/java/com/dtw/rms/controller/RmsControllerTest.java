@@ -64,23 +64,6 @@ class RmsControllerTest {
     }
 
     @Test
-    void shouldGetRateById() {
-        test = new Rate();
-        test.setRateDescription("Rate UnitTest");
-        test.setRateEffectiveDate(Date.valueOf("2020-11-21"));
-        test.setRateExpirationDate(Date.valueOf("2020-11-31"));
-        test.setAmount(1000);
-
-        when(rmsService.findByRateId(any())).thenReturn(Optional.of(test));
-//        Rate response = controller.getRate(100L);
-//
-//        assertEquals(1000, response.getAmount());
-//        assertEquals("Rate UnitTest", response.getRateDescription());
-//        assertEquals(Date.valueOf("2020-11-21"), response.getRateEffectiveDate());
-//        assertEquals(Date.valueOf("2020-11-31"), response.getRateExpirationDate());
-
-    }
-    @Test
     void shouldUpdateRate() {
         test = new Rate();
         test.setRateId(100L);
@@ -103,8 +86,6 @@ class RmsControllerTest {
 
     @Test
     void shouldDeleteRate() {
-
-
         controller.deleteRate(100L);
     }
 
