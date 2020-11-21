@@ -5,6 +5,8 @@ import com.dtw.rms.exception.InternalServerException;
 import com.dtw.rms.exception.RateNotFoundException;
 import com.dtw.rms.model.Rate;
 import com.dtw.rms.service.RmsService;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +42,8 @@ public class RmsController {
      */
     @GetMapping("/surcharge/{rateId}")
     @ResponseBody
+    @HystrixCommand(fallbackMethod = "fallBackTimeout", commandProperties = {
+    @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "3000")})
     public Rate getRate(@PathVariable Long rateId) {
 
         try {
@@ -129,6 +133,8 @@ public class RmsController {
      */
     @DeleteMapping("/surcharge/{rateId}")
     @ResponseBody
+    @HystrixCommand(fallbackMethod = "fallBackTimeout", commandProperties = {
+    @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "3000")})
     public void deleteRate(@PathVariable Long rateId) {
 
         try {
@@ -139,5 +145,8 @@ public class RmsController {
             throw new InternalServerException("Internal Servererror. Please contact admin");
         }
     }
-
+   private Rate fallBackTimeout(Long rateId) {
+       logger.info("FallBack method called: " + rateId);
+      return   new Rate();
+   }
 }
